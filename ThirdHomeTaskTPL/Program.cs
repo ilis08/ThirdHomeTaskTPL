@@ -13,37 +13,52 @@ namespace ThirdHomeTaskTPL
         {
             CsvData csv = new CsvData();
 
-            HtmlHelper helper = new HtmlHelper();
+            List<Product> products = new List<Product>();
+           
+            Task<List<string>> task1 = new(() => csv.LoadString());
 
-            List<Product> products = new();
+            task1.Start();
 
-            for (int i = 0; i < csv.urls.Count; i++)
+            task1.Wait();
+
+            List<Task<List<Product>>> taskList = new();
+
+            foreach (var item in task1.Result)
             {
-                Task<HtmlDocument> task1 = new(() => helper.DownloadData(csv.urls[i]));
-                Task<List<Product>> task2 = task1.ContinueWith(p => helper.ParseData(p.Result));
-
-                task1.Start();
-
-                task2.Wait();
-
-                products.AddRange(task2.Result);
+                taskList.Add(Task.Run(() =>
+                {
+                    return ProcessData(item);
+                }));
             }
 
-            foreach (var item in products)
+            var tasks = Task.WhenAll(taskList);
+
+            var final = tasks.ContinueWith((tasks) =>
             {
-                Console.WriteLine(item.Name);
-            }
+                foreach (var task in tasks.Result)
+                {
+                    foreach (var item in task)
+                    {
+                        Console.WriteLine(item.Name);
+                    }
+                }
+            });
+
+            final.Wait();
+           
         }
 
-        protected static string DataLoad(string fullUrl)
+        protected static List<Product> ProcessData(string url)
         {
-            HttpClient client = new HttpClient();
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13;
-            client.DefaultRequestHeaders.Accept.Clear();
+            HtmlHelper helper = new HtmlHelper();
 
-            var response = client.GetStringAsync(fullUrl);
+            Task<HtmlDocument> task1 = new(() => helper.DownloadData(url));
 
-            return response.Result;
+            task1.Start();
+
+            Task<List<Product>> task2 = task1.ContinueWith(c => helper.ParseData(c.Result));
+
+            return task2.Result;
         }
     }
 }

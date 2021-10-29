@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ThirdHomeTaskTPL
@@ -11,6 +12,7 @@ namespace ThirdHomeTaskTPL
     {
         public HtmlDocument DownloadData(string url)
         {
+            Thread.Sleep(5000);
             HtmlWeb web = new();
 
             HtmlDocument doc = web.Load(url);

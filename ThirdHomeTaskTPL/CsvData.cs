@@ -15,10 +15,10 @@ namespace ThirdHomeTaskTPL
 
         public CsvData()
         {
-            LoadString();
+
         }
 
-        public void LoadString()
+        public List<string> LoadString()
         {
             var csvTable = new DataTable();
 
@@ -31,6 +31,8 @@ namespace ThirdHomeTaskTPL
             {
                 urls.Add(csvTable.Rows[i][0].ToString());
             }
+
+            return urls;
         }
     }
 }
