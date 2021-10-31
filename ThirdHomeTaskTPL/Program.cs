@@ -1,20 +1,25 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ThirdHomeTaskTPL
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
+            Stopwatch watch = new Stopwatch();
+
+            watch.Start();
+            Console.WriteLine("------------StartWatch---------------");
+
             CsvData csv = new CsvData();
 
-            List<Product> products = new List<Product>();
-           
             Task<List<string>> task1 = new(() => csv.LoadString());
 
             task1.Start();
@@ -45,12 +50,17 @@ namespace ThirdHomeTaskTPL
             });
 
             final.Wait();
-           
+
+            watch.Stop();
+
+            Console.WriteLine("------------StopWatch---------------");
+
+            Console.WriteLine(watch.ElapsedMilliseconds);
         }
 
         protected static List<Product> ProcessData(string url)
         {
-            HtmlHelper helper = new HtmlHelper();
+            HtmlHelper helper = new();
 
             Task<HtmlDocument> task1 = new(() => helper.DownloadData(url));
 

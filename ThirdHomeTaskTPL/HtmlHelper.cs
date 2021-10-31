@@ -12,7 +12,7 @@ namespace ThirdHomeTaskTPL
     {
         public HtmlDocument DownloadData(string url)
         {
-            Thread.Sleep(5000);
+            //Thread.Sleep(5000);
             HtmlWeb web = new();
 
             HtmlDocument doc = web.Load(url);
@@ -20,7 +20,7 @@ namespace ThirdHomeTaskTPL
             return doc;
         }
 
-        public List<Product> ParseData(HtmlDocument docs) 
+        public List<Product> ParseData(HtmlDocument docs)
         {
             List<Product> products = new List<Product>();
 
